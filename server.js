@@ -11,13 +11,19 @@ app.use(bodyParser.json());
 app.post('/contact', async (req, res) => {
     const { name, email, message } = req.body;
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+    try {
+        await transporter.sendMail({
+            from: email,
+            to: process.env.EMAIL_USER,
+            subject: 'New Contact Message',
+            text: `From: ${name} <${email}>\n\n${message}`
+        });
+        res.status(200).send('Message sent');
+    } catch (error) {
+        console.error('Email Error:', error);  // 👈 add this
+        res.status(500).send('Error sending message');
+    }
+});
 
     try {
         await transporter.sendMail({
