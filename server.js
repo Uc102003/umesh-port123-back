@@ -9,21 +9,20 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/contact', async (req, res) => {
-    const { name, email, message } = req.body;
-
     try {
         await transporter.sendMail({
-            from: email,
+            from: req.body.email,
             to: process.env.EMAIL_USER,
             subject: 'New Contact Message',
-            text: `From: ${name} <${email}>\n\n${message}`
+            text: `From: ${req.body.name} <${req.body.email}>\n\n${req.body.message}`
         });
         res.status(200).send('Message sent');
     } catch (error) {
-        console.error('Email Error:', error);  // 👈 add this
+        console.error('❌ Email error:', error.message);
         res.status(500).send('Error sending message');
     }
 });
+
 
     try {
         await transporter.sendMail({
