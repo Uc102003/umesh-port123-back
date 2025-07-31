@@ -1,0 +1,38 @@
+const express = require('express');
+const nodemailer = require('nodemailer');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+app.post('/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+
+    try {
+        await transporter.sendMail({
+            from: email,
+            to: process.env.EMAIL_USER,
+            subject: 'New Contact Message',
+            text: `From: ${name} <${email}>
+
+${message}`
+        });
+        res.status(200).send('Message sent');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error sending message');
+    }
+});
+
+app.listen(process.env.PORT || 3000, () => console.log('Server running'));
