@@ -17,6 +17,8 @@ app.get('/', (req, res) => {
 app.post('/contact', async (req, res) => {
     const { name, email, message } = req.body;
 
+    console.log('📨 Contact form data received:', { name, email, message });
+
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -36,10 +38,11 @@ app.post('/contact', async (req, res) => {
         console.log('✅ Email sent:', info.response);
         res.status(200).send('Message sent');
     } catch (error) {
-        console.error('❌ Email error:', error.message);
+        console.error('❌ Email error:', error); // show full error, not just message
         res.status(500).send('Error sending message');
     }
 });
+
 
 // ✅ Start the server
 const PORT = process.env.PORT || 3000;
